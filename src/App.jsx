@@ -3,6 +3,9 @@ import { generateClient } from "aws-amplify/api";
 
 const client = generateClient();
 
+/* =========================
+   GraphQL Operations
+========================= */
 const listNotesQuery = `
   query {
     getNotes {
@@ -46,10 +49,16 @@ export default function App() {
   ========================= */
   useEffect(() => {
     async function loadNotes() {
-      const result = await client.graphql({
-        query: listNotesQuery
-      });
-      setNotes(result.data.getNotes);
+      try {
+        const result = await client.graphql({
+          query: listNotesQuery
+        });
+
+        // Defensive: ensure array
+        setNotes(result.data?.getNotes ?? []);
+      } catch (err) {
+        console.error("Error loading notes", err);
+      }
     }
 
     loadNotes();
@@ -63,8 +72,16 @@ export default function App() {
       .graphql({ query: onCreateNoteSubscription })
       .subscribe({
         next: ({ data }) => {
-          const newNote = data.onCreateNote;
-          setNotes(prev => [newNote, ...prev]);
+          const newNote = data?.onCreateNote;
+          if (!newNote) return;
+
+          setNotes(prev => {
+            // 🔐 Extra safety: avoid duplicates by noteId
+            if (prev.some(n => n.noteId === newNote.noteId)) {
+              return prev;
+            }
+            return [newNote, ...prev];
+          });
         },
         error: error => console.error("Subscription error", error)
       });
@@ -76,20 +93,24 @@ export default function App() {
      Create note
   ========================= */
   async function createNote() {
-    if (!title || !content) return;
+    if (!title.trim() || !content.trim()) return;
 
-    await client.graphql({
-      query: createNoteMutation,
-      variables: { title, content }
-    });
+    try {
+      await client.graphql({
+        query: createNoteMutation,
+        variables: { title, content }
+      });
 
-    setTitle("");
-    setContent("");
-    // ❌ Do NOT reload notes
+      setTitle("");
+      setContent("");
+      // ❌ DO NOT reload notes
+    } catch (err) {
+      console.error("Error creating note", err);
+    }
   }
 
   return (
-    <div style={{ padding: 40, fontFamily: "Arial" }}>
+    <div style={{ padding: 40, fontFamily: "Arial, sans-serif" }}>
       <h1>📝 Real-Time Serverless Notes</h1>
 
       <h3>Create Note</h3>
@@ -108,18 +129,22 @@ export default function App() {
       <button onClick={createNote}>Create</button>
 
       <h3>Notes</h3>
+
+      {notes.length === 0 && <p>No notes yet</p>}
+
       {notes.map(note => (
         <div
           key={note.noteId}
           style={{
             border: "1px solid #ddd",
             padding: 10,
-            marginTop: 10
+            marginTop: 10,
+            borderRadius: 4
           }}
         >
-          <strong>{note.title}</strong>
+          <strong>{note.title || "(no title)"}</strong>
           <br />
-          {note.content}
+          <span>{note.content || "(no content)"}</span>
         </div>
       ))}
     </div>
