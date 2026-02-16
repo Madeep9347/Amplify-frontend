@@ -53,7 +53,8 @@ function App({ signOut, user }) {
     async function loadNotes() {
       try {
         const result = await client.graphql({
-          query: listNotesQuery
+          query: listNotesQuery,
+          authMode: "userPool"
         });
 
         setNotes(result.data?.getNotes ?? []);
@@ -70,7 +71,10 @@ function App({ signOut, user }) {
   ========================= */
   useEffect(() => {
     const subscription = client
-      .graphql({ query: onCreateNoteSubscription })
+      .graphql({
+        query: onCreateNoteSubscription,
+        authMode: "userPool"
+      })
       .subscribe({
         next: ({ data }) => {
           const newNote = data?.onCreateNote;
@@ -98,7 +102,8 @@ function App({ signOut, user }) {
     try {
       await client.graphql({
         query: createNoteMutation,
-        variables: { title, content }
+        variables: { title, content },
+        authMode: "userPool"
       });
 
       setTitle("");
