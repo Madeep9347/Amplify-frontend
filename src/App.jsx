@@ -127,7 +127,19 @@ function App({ signOut, user }) {
 
       <h3>Create Note</h3> 
        
-      <input type="text" class="form-control"
+      <input type="text" class="form-control" style="display: block;
+  width: 100%;
+  height: 2.714rem;
+  padding: 0.438rem 1rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: #6e6b7b;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #d8d6de;
+  border-radius: 0.357rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;"
         placeholder="Title"
         value={title}
         onChange={e => setTitle(e.target.value)}
