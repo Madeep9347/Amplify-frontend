@@ -127,7 +127,7 @@ function App({ signOut, user }) {
 
       <h3>Create Note</h3> 
        
-      <input  style={{display: block;
+      <input  style={{display: block,
   width: 100%,
   height: 2.714rem,
   padding: 0.438rem 1rem,
@@ -139,7 +139,7 @@ function App({ signOut, user }) {
   background-clip: padding-box,
   border: 1px solid #d8d6de,
   border-radius: 0.357rem,
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,}}
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out}}
         placeholder="Title"
         value={title}
         onChange={e => setTitle(e.target.value)}
