@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { generateClient } from "aws-amplify/api";
+import { withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
 
 const client = generateClient();
 
@@ -39,7 +41,7 @@ const onCreateNoteSubscription = `
   }
 `;
 
-export default function App() {
+function App({ signOut, user }) {
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -54,7 +56,6 @@ export default function App() {
           query: listNotesQuery
         });
 
-        // Defensive: ensure array
         setNotes(result.data?.getNotes ?? []);
       } catch (err) {
         console.error("Error loading notes", err);
@@ -76,7 +77,6 @@ export default function App() {
           if (!newNote) return;
 
           setNotes(prev => {
-            // 🔐 Extra safety: avoid duplicates by noteId
             if (prev.some(n => n.noteId === newNote.noteId)) {
               return prev;
             }
@@ -103,7 +103,6 @@ export default function App() {
 
       setTitle("");
       setContent("");
-      // ❌ DO NOT reload notes
     } catch (err) {
       console.error("Error creating note", err);
     }
@@ -111,7 +110,15 @@ export default function App() {
 
   return (
     <div style={{ padding: 40, fontFamily: "Arial, sans-serif" }}>
-      <h1>📝 Real-Time Serverless Notes</h1>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <h1>📝 Real-Time Serverless Notes</h1>
+        <div>
+          <span style={{ marginRight: 10 }}>
+            Logged in as: {user?.signInDetails?.loginId}
+          </span>
+          <button onClick={signOut}>Sign Out</button>
+        </div>
+      </div>
 
       <h3>Create Note</h3>
       <input
@@ -150,3 +157,6 @@ export default function App() {
     </div>
   );
 }
+
+/* 🔐 Wrap the App with Cognito Auth */
+export default withAuthenticator(App);
