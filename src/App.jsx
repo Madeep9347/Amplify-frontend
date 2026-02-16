@@ -125,8 +125,9 @@ function App({ signOut, user }) {
         </div>
       </div>
 
-      <h3>Create Note</h3>
-      <input
+      <h3>Create Note</h3> 
+       
+      <input type="text" class="form-control"
         placeholder="Title"
         value={title}
         onChange={e => setTitle(e.target.value)}
