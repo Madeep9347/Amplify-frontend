@@ -125,35 +125,58 @@ function App({ signOut, user }) {
         </div>
       </div>
 
-      <h3>Create Note</h3> 
-       
-      <input  style={{display: block,
-  width: 100%,
-  height: 2.714rem,
-  padding: 0.438rem 1rem,
-  font-size: 1rem,
-  font-weight: 400,
-  line-height: 1.45,
-  color: #6e6b7b,
-  background-color: #fff,
-  background-clip: padding-box,
-  border: 1px solid #d8d6de,
-  border-radius: 0.357rem,
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out}}
+      <h3>Create Note</h3>
+
+      <input
+        style={{
+          display: "block",
+          width: "100%",
+          height: "2.714rem",
+          padding: "0.438rem 1rem",
+          fontSize: "1rem",
+          fontWeight: 400,
+          lineHeight: 1.45,
+          color: "#6e6b7b",
+          backgroundColor: "#fff",
+          border: "1px solid #d8d6de",
+          borderRadius: "0.357rem",
+          marginBottom: "10px",
+          transition:
+            "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out"
+        }}
         placeholder="Title"
         value={title}
         onChange={e => setTitle(e.target.value)}
       />
-      <br />
+
       <textarea
+        style={{
+          display: "block",
+          width: "100%",
+          minHeight: "100px",
+          padding: "0.75rem",
+          fontSize: "1rem",
+          border: "1px solid #d8d6de",
+          borderRadius: "0.357rem",
+          marginBottom: "10px"
+        }}
         placeholder="Content"
         value={content}
         onChange={e => setContent(e.target.value)}
       />
-      <br />
-      <button onClick={createNote}>Create</button>
 
-      <h3>Notes</h3>
+      <button
+        style={{
+          padding: "8px 16px",
+          cursor: "pointer",
+          borderRadius: "4px"
+        }}
+        onClick={createNote}
+      >
+        Create
+      </button>
+
+      <h3 style={{ marginTop: 30 }}>Notes</h3>
 
       {notes.length === 0 && <p>No notes yet</p>}
 
