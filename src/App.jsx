@@ -8,6 +8,7 @@ const client = generateClient();
 /* =========================
    GraphQL Operations
 ========================= */
+
 const listNotesQuery = `
   query {
     getNotes {
@@ -15,6 +16,7 @@ const listNotesQuery = `
       title
       content
       createdAt
+      processed
     }
   }
 `;
@@ -26,6 +28,7 @@ const createNoteMutation = `
       title
       content
       createdAt
+      processed
     }
   }
 `;
@@ -37,6 +40,19 @@ const onCreateNoteSubscription = `
       title
       content
       createdAt
+      processed
+    }
+  }
+`;
+
+const onUpdateNoteSubscription = `
+  subscription {
+    onUpdateNote {
+      noteId
+      title
+      content
+      createdAt
+      processed
     }
   }
 `;
@@ -67,7 +83,7 @@ function App({ signOut, user }) {
   }, []);
 
   /* =========================
-     REAL-TIME SUBSCRIPTION
+     REAL-TIME CREATE SUBSCRIPTION
   ========================= */
   useEffect(() => {
     const subscription = client
@@ -87,7 +103,33 @@ function App({ signOut, user }) {
             return [newNote, ...prev];
           });
         },
-        error: error => console.error("Subscription error", error)
+        error: error => console.error("Create subscription error", error)
+      });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  /* =========================
+     REAL-TIME UPDATE SUBSCRIPTION
+  ========================= */
+  useEffect(() => {
+    const subscription = client
+      .graphql({
+        query: onUpdateNoteSubscription,
+        authMode: "userPool"
+      })
+      .subscribe({
+        next: ({ data }) => {
+          const updatedNote = data?.onUpdateNote;
+          if (!updatedNote) return;
+
+          setNotes(prev =>
+            prev.map(n =>
+              n.noteId === updatedNote.noteId ? updatedNote : n
+            )
+          );
+        },
+        error: error => console.error("Update subscription error", error)
       });
 
     return () => subscription.unsubscribe();
@@ -134,15 +176,9 @@ function App({ signOut, user }) {
           height: "2.714rem",
           padding: "0.438rem 1rem",
           fontSize: "1rem",
-          fontWeight: 400,
-          lineHeight: 1.45,
-          color: "#6e6b7b",
-          backgroundColor: "#fff",
           border: "1px solid #d8d6de",
           borderRadius: "0.357rem",
-          marginBottom: "10px",
-          transition:
-            "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out"
+          marginBottom: "10px"
         }}
         placeholder="Title"
         value={title}
@@ -193,6 +229,10 @@ function App({ signOut, user }) {
           <strong>{note.title || "(no title)"}</strong>
           <br />
           <span>{note.content || "(no content)"}</span>
+          <br />
+          <small>
+            {note.processed ? "✅ Processed" : "⏳ Processing..."}
+          </small>
         </div>
       ))}
     </div>
