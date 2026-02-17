@@ -6,8 +6,8 @@ import App from "./App";
 Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolId: "ap-south-1_4ggR3R3Bt",
-      userPoolClientId: "94cfgmoa9ojjd2kg7p8i6s9hc",
+      userPoolId: "ap-south-1_x383wcc1w",
+      userPoolClientId: "7tdi337ggn89df708lsnmf6d01",
       region: "ap-south-1"
     }
   },
