@@ -49,9 +49,6 @@ const onUpdateNoteSubscription = `
   subscription {
     onUpdateNote {
       noteId
-      title
-      content
-      createdAt
       processed
     }
   }
@@ -83,7 +80,7 @@ function App({ signOut, user }) {
   }, []);
 
   /* =========================
-     REAL-TIME CREATE SUBSCRIPTION
+     CREATE SUBSCRIPTION
   ========================= */
   useEffect(() => {
     const subscription = client
@@ -110,7 +107,7 @@ function App({ signOut, user }) {
   }, []);
 
   /* =========================
-     REAL-TIME UPDATE SUBSCRIPTION
+     UPDATE SUBSCRIPTION
   ========================= */
   useEffect(() => {
     const subscription = client
@@ -124,8 +121,10 @@ function App({ signOut, user }) {
           if (!updatedNote) return;
 
           setNotes(prev =>
-            prev.map(n =>
-              n.noteId === updatedNote.noteId ? updatedNote : n
+            prev.map(note =>
+              note.noteId === updatedNote.noteId
+                ? { ...note, processed: updatedNote.processed }
+                : note
             )
           );
         },
@@ -239,5 +238,4 @@ function App({ signOut, user }) {
   );
 }
 
-/* 🔐 Wrap the App with Cognito Auth */
 export default withAuthenticator(App);
