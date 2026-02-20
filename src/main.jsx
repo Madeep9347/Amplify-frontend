@@ -6,15 +6,15 @@ import App from "./App";
 Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolId: "ap-south-1_x383wcc1w",
-      userPoolClientId: "7tdi337ggn89df708lsnmf6d01",
-      region: "ap-south-1"
+      userPoolId: "us-east-1_2YYjIAvbg",
+      userPoolClientId: "41tmel619tlbai8s2jcap01dv0",
+      region: "us-east-1"
     }
   },
   API: {
     GraphQL: {
-      endpoint: "https://qiy5sa4hqrg6hcxa2qkrh7z52i.appsync-api.ap-south-1.amazonaws.com/graphql",
-      region: "ap-south-1",
+      endpoint: "https://pvl7rz22xfdtfpze4mz36mli44.appsync-api.us-east-1.amazonaws.com/graphql",
+      region: "us-east-1",
       defaultAuthMode: "userPool"
     }
   }
